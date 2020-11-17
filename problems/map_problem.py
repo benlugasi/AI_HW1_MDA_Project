@@ -49,15 +49,15 @@ class MapProblem(GraphProblem):
         """
         # All of the states in this problem are instances of the class `MapState`.
         assert isinstance(state_to_expand, MapState)
-        assert(state_to_expand is not None)
-        #TODO Check if (state_to_expand is null)?
+        assert(state_to_expand is not None) #TODO Check if (state_to_expand is null)?
+
         # Get the junction (in the map) that is represented by the state to expand.
         junction = self.streets_map[state_to_expand.junction_id]
         for link in junction.outgoing_links:
             successor_state = MapState(link.target)
             yield OperatorResult(successor_state, link.distance)
 
-        # TODO [Ex.10]:
+        # TODO [Ex.10]: Remove when ready!
         #  Read the documentation of this method in the base class `GraphProblem.expand_state_with_costs()`.
         #  Finish the implementation of this method.
         #  Iterate over the outgoing links of the current junction (find the implementation of `Junction`

@@ -48,6 +48,7 @@ class AStar(BestFirstSearch):
         Notice: You may use `search_node.g_cost`, `self.heuristic_weight`, and `self.heuristic_function`.
         """
         w = self.heuristic_weight
+        # TODO check if the estimate function should actually be used their.
         return ((1-w)*search_node.g_cost) + (w*self.heuristic_function.estimate(search_node.state))
 
 

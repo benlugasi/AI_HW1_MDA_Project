@@ -65,7 +65,7 @@ class SearchNodesCollection:
 
     def has_node(self, node: SearchNode) -> bool:
         return node.state in self._state_to_search_node_mapping \
-            and node is self._state_to_search_node_mapping[node.state]
+               and node is self._state_to_search_node_mapping[node.state]
 
     def has_state(self, state: GraphProblemState) -> bool:
         return state in self._state_to_search_node_mapping
@@ -96,7 +96,7 @@ class BestFirstSearch(GraphProblemSolver):
      by overriding the abstract method `_calc_node_expanding_priority()`.
     The opening of a successor node is also not defined by this algorithm,
      and have to be defined by the inheritor by overriding the abstract method
-     `_open_successor_node()`.
+     `_open_successor_node()` --> how to expand the current node and which nodes add to the "open" queue.
     """
 
     solver_name: str = 'BestFirstSearch'
@@ -120,7 +120,7 @@ class BestFirstSearch(GraphProblemSolver):
         max_nr_stored_states = 0
 
         def _get_current_nr_stored_states() -> int:
-            return len(self.open) + (len(self.close) if self.close is not None else 0)
+            return len(self.open) + (len(self.close) if self.close is not None else 0)  # why like this?!
 
         self.open = SearchNodesPriorityQueue()
         if self.use_close:
@@ -216,4 +216,3 @@ class BestFirstSearch(GraphProblemSolver):
          of another node representing the same state in `self.close`.
         """
         ...
-

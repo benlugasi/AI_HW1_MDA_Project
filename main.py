@@ -33,7 +33,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     fig, ax1 = plt.subplots()
 
     # TODO: Plot the total distances with ax1. Use `ax1.plot(...)`.
-    # TODO: Make this curve colored blue with solid line style.
+    # TODO: Make this curveF colored blue with solid line style.
     # TODO: Set its label to be 'Solution cost'.
     # See documentation here:
     # https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
@@ -96,16 +96,18 @@ def toy_map_problem_experiments():
     print()
     print('Solve the map problem.')
 
-    # Ex.10
-    # TODO: Just run it and inspect the printed result.
+    # Ex.10 done
     toy_map_problem = MapProblem(streets_map, 54, 549)
     uc = UniformCost()
     res = uc.solve_problem(toy_map_problem)
     print(res)
 
-    # Ex.12
-    # TODO: create an instance of `AStar` with the `NullHeuristic`,
-    #       solve the same `toy_map_problem` with it and print the results (as before).
+    # Ex.12 done
+    astar = AStar(NullHeuristic)
+    res = astar.solve_problem(toy_map_problem)
+    print(res)
+
+
     # Notice: AStar constructor receives the heuristic *type* (ex: `MyHeuristicClass`),
     #         and NOT an instance of the heuristic (eg: not `MyHeuristicClass()`).
     exit()  # TODO: remove!

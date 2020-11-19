@@ -80,11 +80,11 @@ class MDAState(GraphProblemState):
         #   implements the `__eq__()` method. The types `frozenset`, `ApartmentWithSymptomsReport`, `Laboratory`
         #   are also comparable (in the same manner).
 
-        return (self.current_site == other.current_site
-               and self.tests_on_ambulance == other.tests_on_ambulance
-               and self.tests_transferred_to_lab == other.tests_transferred_to_lab
-               and self.nr_matoshim_on_ambulance == other.nr_matoshim_on_ambulance
-               and self.visited_labs == other.visited_labs)
+        return self.current_site == other.current_site\
+               and self.tests_on_ambulance == other.tests_on_ambulance\
+               and self.tests_transferred_to_lab == other.tests_transferred_to_lab\
+               and self.nr_matoshim_on_ambulance == other.nr_matoshim_on_ambulance\
+               and self.visited_labs == other.visited_labs
 
     def __hash__(self):
         """
@@ -216,40 +216,41 @@ class MDAProblem(GraphProblem):
             - Python's sets union operation (`some_set_or_frozenset | some_other_set_or_frozenset`).V
         """
         assert isinstance(state_to_expand, MDAState)
-        apartments = self.get_reported_apartments_waiting_to_visit(state_to_expand)
-        apartments_to_visit = set()
-        for apartment in apartments:
-            if self.apartmentCanVisit(state_to_expand, apartment):
-                apartments_to_visit.add(apartment)
-        labs = self.problem_input.laboratories
-        labs_to_visit = set()
-        for lab in labs:
-            if self.labCanVisit(state_to_expand,lab):
-                labs_to_visit.add(lab)
-        sites = labs_to_visit | apartments_to_visit
+        sites = set(self.problem_input.laboratories) | set(self.get_reported_apartments_waiting_to_visit(state_to_expand))
         for site in sites:
-            if isinstance(site, ApartmentWithSymptomsReport): #appt.
-                taken = frozenset({site}) | state_to_expand.tests_on_ambulance
-                succ_state = MDAState(site,taken, state_to_expand.tests_transferred_to_lab, state_to_expand.nr_matoshim_on_ambulance-site.nr_roommates,state_to_expand.visited_labs)
-                o_name = "visit " + site.reporter_name
-            else:            #if isinstance(self.site, Laboratory):
-                transferred = state_to_expand.tests_on_ambulance | state_to_expand.tests_on_ambulance
-                nr_matoshim_in_lab = 0
-                if site not in state_to_expand.visited_labs:
-                    nr_matoshim_in_lab = site.max_nr_matoshim
-                visitedLabs = state_to_expand.visited_labs | frozenset({site})
-                succ_state = MDAState(site,frozenset(),transferred,state_to_expand.nr_matoshim_on_ambulance+nr_matoshim_in_lab, visitedLabs)
-                o_name = "go to lab "+site.name
-            yield OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
+            if isinstance(site, ApartmentWithSymptomsReport):  # appt.
+                if self.apartmentCanVisit(state_to_expand, site):
+                    taken = frozenset({site}) | state_to_expand.tests_on_ambulance
+                    succ_state = MDAState(site, taken, state_to_expand.tests_transferred_to_lab,
+                                          state_to_expand.nr_matoshim_on_ambulance - site.nr_roommates,
+                                          state_to_expand.visited_labs)
+                    o_name = "visit " + site.reporter_name
+                else:
+                    continue
+            if isinstance(site, Laboratory):
+                if self.labCanVisit(state_to_expand, site):
+                    transferred = state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab
+                    nr_matoshim_in_lab = 0
+                    if site not in state_to_expand.visited_labs:
+                        nr_matoshim_in_lab = site.max_nr_matoshim
+                    visitedLabs = state_to_expand.visited_labs | frozenset({site})
+                    succ_state = MDAState(site, frozenset(), transferred,
+                                          state_to_expand.nr_matoshim_on_ambulance + nr_matoshim_in_lab, visitedLabs)
+                    o_name = "go to lab " + site.name
+                else:
+                    continue
+            res = OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
+            yield res
             
     def apartmentCanVisit(self, state_to_expand, apartment):
-        if apartment.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance\
-                and self.problem_input.ambulance.total_fridges_capacity:
+        if apartment not in state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab\
+            and apartment.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance\
+            and apartment.nr_roommates <= self.problem_input.ambulance.total_fridges_capacity - state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance():
             return True
         return False
 
     def labCanVisit(self,state_to_expand,lab):
-        if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance()>0 or lab not in state_to_expand.visited_labs:
+        if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in state_to_expand.visited_labs:
             return True
         return False
 
@@ -304,7 +305,7 @@ class MDAProblem(GraphProblem):
         monetary_cost = (gasPrice*(driverGasCons+fridgeGasCons)*distance_cost+(labTestTransferCost+labRevisitCost))
         tests_travel_distance_cost = testsOnAmbulance*distance_cost
 
-        return MDACost(distance_cost, monetary_cost, tests_travel_distance_cost,self.optimization_objective)
+        return MDACost(distance_cost, monetary_cost, tests_travel_distance_cost, self.optimization_objective)
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -322,9 +323,10 @@ class MDAProblem(GraphProblem):
         4. M belongs to N // Need to have any number of Matoshim
         5. L in Labs // need to be in any Lab
                 """
+
         return isinstance(state.current_site, Laboratory)\
                and state.tests_on_ambulance == frozenset()\
-               and self.problem_input.reported_apartments == state.tests_transferred_to_lab
+               and frozenset(self.problem_input.reported_apartments) - frozenset(state.tests_transferred_to_lab) == frozenset()
 
     def get_zero_cost(self) -> Cost:
         """

@@ -39,7 +39,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
     # You can also Google for additional examples.
 
-    p1, = ax1.plot(weights, total_cost)
+    p1, = ax1.plot(weights, total_cost, color='b' ,label="solution cost")
 
     # ax1: Make the y-axis label, ticks and tick labels match the line color.
     ax1.set_ylabel('Solution cost', color='b')
@@ -52,7 +52,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # TODO: Plot the total expanded with ax2. Use `ax2.plot(...)`.
     # TODO: Make this curve colored red with solid line style.
     # TODO: Set its label to be '#Expanded states'.
-    p2, = ax2.plot(weights, total_nr_expanded)
+    p2, = ax2.plot(weights, total_nr_expanded, color='r', label="#Expanded states")
 
     # ax2: Make the y-axis label, ticks and tick labels match the line color.
     ax2.set_ylabel('#Expanded states', color='r')

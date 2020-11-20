@@ -108,8 +108,8 @@ def toy_map_problem_experiments():
     res = astar.solve_problem(toy_map_problem)
     print(res)
 
-    # Ex.15
-    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
+    # Ex.15 todo: uncomment this when assinging the HOME Work
+    #run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------

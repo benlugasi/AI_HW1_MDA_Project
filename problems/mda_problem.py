@@ -323,10 +323,9 @@ class MDAProblem(GraphProblem):
         4. M belongs to N // Need to have any number of Matoshim
         5. L in Labs // need to be in any Lab
                 """
-
         return isinstance(state.current_site, Laboratory)\
                and state.tests_on_ambulance == frozenset()\
-               and frozenset(self.problem_input.reported_apartments) - frozenset(state.tests_transferred_to_lab) == frozenset()
+               and len(self.problem_input.reported_apartments) == len(state.tests_transferred_to_lab)
 
     def get_zero_cost(self) -> Cost:
         """

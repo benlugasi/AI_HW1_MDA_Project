@@ -217,9 +217,20 @@ class MDAProblem(GraphProblem):
         """
         assert isinstance(state_to_expand, MDAState)
         sites = set(self.problem_input.laboratories) | set(self.get_reported_apartments_waiting_to_visit(state_to_expand))
+
+        apartmentCanVisit = lambda cur_state, apt : True if(apt not in cur_state.tests_on_ambulance | cur_state.tests_transferred_to_lab\
+            and apt.nr_roommates <= cur_state.nr_matoshim_on_ambulance\
+            and apt.nr_roommates <= self.problem_input.ambulance.total_fridges_capacity - cur_state.get_total_nr_tests_taken_and_stored_on_ambulance())\
+            else False
+
+        labCanVisit = lambda cur_state, lab: True if(cur_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in cur_state.visited_labs)\
+            else False
+
+
+
         for site in sites:
             if isinstance(site, ApartmentWithSymptomsReport):  # appt.
-                if self.apartmentCanVisit(state_to_expand, site):
+                if apartmentCanVisit(state_to_expand, site):
                     taken = frozenset({site}) | state_to_expand.tests_on_ambulance
                     succ_state = MDAState(site, taken, state_to_expand.tests_transferred_to_lab,
                                           state_to_expand.nr_matoshim_on_ambulance - site.nr_roommates,
@@ -228,7 +239,7 @@ class MDAProblem(GraphProblem):
                 else:
                     continue
             if isinstance(site, Laboratory):
-                if self.labCanVisit(state_to_expand, site):
+                if labCanVisit(state_to_expand, site):
                     transferred = state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab
                     nr_matoshim_in_lab = 0
                     if site not in state_to_expand.visited_labs:
@@ -241,18 +252,22 @@ class MDAProblem(GraphProblem):
                     continue
             res = OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
             yield res
-            
-    def apartmentCanVisit(self, state_to_expand, apartment):
-        if apartment not in state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab\
-            and apartment.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance\
-            and apartment.nr_roommates <= self.problem_input.ambulance.total_fridges_capacity - state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance():
-            return True
-        return False
 
-    def labCanVisit(self,state_to_expand,lab):
-        if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in state_to_expand.visited_labs:
-            return True
-        return False
+
+# INLINED ABOVE USING LAMBDA:
+  #def apartmentCanVisit(self, state_to_expand, apartment):
+   #     if apartment not in state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab\
+    #        and apartment.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance\
+     #       and apartment.nr_roommates <= self.problem_input.ambulance.total_fridges_capacity - state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance():
+     #       return True
+     #   return False
+
+    #def labCanVisit(self,state_to_expand,lab):
+     #   if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in state_to_expand.visited_labs:
+      #      return True
+      #  return False
+
+
 
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
         """

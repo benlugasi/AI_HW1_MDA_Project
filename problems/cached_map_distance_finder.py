@@ -52,9 +52,3 @@ class CachedMapDistanceFinder:
 
         self._insert_to_cache((src_junction.index, tgt_junction.index), result.solution_cost)
         return result.solution_cost
-
-
-
-
-
-        raise NotImplementedError  # TODO: remove this line!

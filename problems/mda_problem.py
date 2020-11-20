@@ -227,8 +227,7 @@ class MDAProblem(GraphProblem):
                     o_name = "go to lab " + site.name
                 else:
                     continue
-            res = OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
-            yield res
+            yield OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
             
     def apartmentCanVisit(self, state_to_expand, apartment):
         if apartment not in state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab\

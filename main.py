@@ -145,8 +145,6 @@ def basic_mda_problem_experiments():
     uc = UniformCost()
     res = uc.solve_problem(small_mda_problem_with_distance_cost)
     print(res)
-    # TODO: create an instance of `UniformCost`, solve the `small_mda_problem_with_distance_cost`
-    #       with it and print the results.
     exit()  # TODO: remove!
 
 

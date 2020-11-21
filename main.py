@@ -145,9 +145,6 @@ def basic_mda_problem_experiments():
     uc = UniformCost()
     res = uc.solve_problem(small_mda_problem_with_distance_cost)
     print(res)
-    exit()  # TODO: remove!
-
-
 
 def mda_problem_with_astar_experiments():
     print()
@@ -157,8 +154,9 @@ def mda_problem_with_astar_experiments():
     moderate_mda_problem_with_distance_cost = get_mda_problem('moderate', MDAOptimizationObjective.Distance)
 
     # Ex.22
-    # TODO: create an instance of `AStar` with the `MDAMaxAirDistHeuristic`,
-    #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
+    astar = AStar(MDAMaxAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)
     exit()  # TODO: remove!
 
     # Ex.25

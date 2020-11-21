@@ -214,8 +214,6 @@ class MDAProblem(GraphProblem):
         labCanVisit = lambda cur_state, lab: True if(cur_state.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in cur_state.visited_labs)\
             else False
 
-
-
         for site in sites:
             if isinstance(site, ApartmentWithSymptomsReport):  # appt.
                 if apartmentCanVisit(state_to_expand, site):
@@ -239,22 +237,6 @@ class MDAProblem(GraphProblem):
                 else:
                     continue
             yield OperatorResult(succ_state, self.get_operator_cost(state_to_expand, succ_state), o_name)
-
-
-# INLINED ABOVE USING LAMBDA:
-  #def apartmentCanVisit(self, state_to_expand, apartment):
-   #     if apartment not in state_to_expand.tests_on_ambulance | state_to_expand.tests_transferred_to_lab\
-    #        and apartment.nr_roommates <= state_to_expand.nr_matoshim_on_ambulance\
-     #       and apartment.nr_roommates <= self.problem_input.ambulance.total_fridges_capacity - state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance():
-     #       return True
-     #   return False
-
-    #def labCanVisit(self,state_to_expand,lab):
-     #   if state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance() > 0 or lab not in state_to_expand.visited_labs:
-      #      return True
-      #  return False
-
-
 
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
         """
@@ -292,7 +274,7 @@ class MDAProblem(GraphProblem):
         labTestTransferCost = 0
         labRevisitCost = 0
 
-        if isinstance(succ_state.current_site,Laboratory):
+        if isinstance(succ_state.current_site, Laboratory):
             if testsOnAmbulance > 0:
                 labTestTransferCost = succ_state.current_site.tests_transfer_cost
             if succ_state.current_site in succ_state.visited_labs:
@@ -307,6 +289,7 @@ class MDAProblem(GraphProblem):
         tests_travel_distance_cost = testsOnAmbulance*distance_cost
 
         return MDACost(distance_cost, monetary_cost, tests_travel_distance_cost, self.optimization_objective)
+        #TODO: monetary_cost, tests_travel_distance_cost have not been tested yet
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -339,22 +322,12 @@ class MDAProblem(GraphProblem):
         This method returns a list of all reported-apartments that haven't been visited yet.
         For the sake of determinism considerations, the returned list has to be sorted by
          the apartment's report id in an ascending order.
-        TODO [Ex.17]: Implement this method.
-            Use sets difference operation (`some_set - some_other_set`).
-            Use `list(some_set)` to create a list from some given set, and then use
-                `some_list_instance.sort(key=...)` to sort this list. Use a `lambda`
-                function for the sorting `key` parameter. You can read about it and
-                see examples in the internet.
-            Note: Given a collection of items, you can create a new set of these items simply by
-                `set(my_collection_of_items)`. Then you can use set operations over this newly
-                generated set.
-            Note: This method can be implemented using a single line of code. Try to do so.
         """
-        Departments = self.problem_input.reported_apartments
-        Taken = state.tests_on_ambulance
-        WaitingForVisit = list(set(Departments) - set(Taken))
-        WaitingForVisit.sort(key=lambda x: x.report_id)
-        return WaitingForVisit
+        departments = self.problem_input.reported_apartments
+        visitedApartments = set(state.tests_on_ambulance) | set(state.tests_transferred_to_lab)
+        waitingForVisit = list(set(departments) - set(visitedApartments))
+        waitingForVisit.sort(key=lambda x: x.report_id)
+        return waitingForVisit
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
@@ -362,8 +335,10 @@ class MDAProblem(GraphProblem):
         This includes the ambulance's current location, and the locations of the reported apartments
          that hasn't been visited yet.
         The list should be ordered by the junctions index ascendingly (small to big).
-        TODO [Ex.21]: Implement this method.
-            Use the method `self.get_reported_apartments_waiting_to_visit(state)`.
-            Use python's `sorted(some_list, key=...)` function.
         """
-        raise NotImplementedError  # TODO: remove this line!
+        WaitingForVisit = self.get_reported_apartments_waiting_to_visit(state)
+        remaningJunctions = [state.current_location]
+        for apartment in WaitingForVisit:
+            remaningJunctions.append(apartment.location)
+        sorted_arr = sorted(remaningJunctions, key=lambda j: j.index)
+        return sorted_arr

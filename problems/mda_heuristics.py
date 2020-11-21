@@ -6,7 +6,6 @@ from framework import *
 from .mda_problem import *
 from .cached_air_distance_calculator import CachedAirDistanceCalculator
 
-
 __all__ = ['MDAMaxAirDistHeuristic', 'MDASumAirDistHeuristic',
            'MDAMSTAirDistHeuristic', 'MDATestsTravelDistToNearestLabHeuristic']
 
@@ -26,20 +25,6 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
          by calculating the maximum distance within the group of air distances between each two
          junctions in the remaining ambulance path. We don't consider laboratories here because we
          do not know what laboratories would be visited in an optimal solution.
-
-        TODO [Ex.21]:
-            Calculate the `total_distance_lower_bound` by taking the maximum over the group
-                {airDistanceBetween(j1,j2) | j1,j2 in CertainJunctionsInRemainingAmbulancePath s.t. j1 != j2}
-            Notice: The problem is accessible via the `self.problem` field.
-            Use `self.cached_air_distance_calculator.get_air_distance_between_junctions()` for air
-                distance calculations.
-            Use python's built-in `max()` function. Note that `max()` can receive an *ITERATOR*
-                and return the item with the maximum value within this iterator.
-            That is, you can simply write something like this:
-        >>> max(<some expression using item1 & item2>
-        >>>     for item1 in some_items_collection
-        >>>     for item2 in some_items_collection
-        >>>     if <some condition over item1 & item2>)
         """
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
@@ -49,8 +34,11 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        return 10  # TODO: modify this line.
-
+        max_air_dist = max(self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
+                           for j1 in all_certain_junctions_in_remaining_ambulance_path
+                           for j2 in all_certain_junctions_in_remaining_ambulance_path
+                           if j1.index != j2.index)
+        return max_air_dist
 
 class MDASumAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'MDA-Sum-AirDist'

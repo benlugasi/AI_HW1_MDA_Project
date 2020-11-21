@@ -272,7 +272,7 @@ class MDAProblem(GraphProblem):
         """
         distance_cost = self.map_distance_finder.get_map_cost_between(prev_state.current_location, succ_state.current_location)
         if distance_cost is None:
-            return MDACost(float('inf'), float('inf'), float('inf'))
+            return MDACost(float('inf'), float('inf'), float('inf'), self.optimization_objective)
         testsOnAmbulance = float(succ_state.get_total_nr_tests_taken_and_stored_on_ambulance())
         labTestTransferCost = 0
         labRevisitCost = 0

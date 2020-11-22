@@ -125,13 +125,15 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
               `.size(weight='weight')`. Do not manually sum the edges' weights.
         """
         G = nx.Graph()
-        for j in junctions:
-            G.add_node(j)
-        junctions_left = junctions
-        for j1 in junctions_left:
-            junctions_left.remove(j1)
-            for j2 in junctions_left:
-                G.add_edge(j1, j2, weight = self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2))
+        G.add_nodes_from(junctions)
+        #for j in junctions:
+        #    G.add_node(j)
+        junctions_met = []
+        for j1 in junctions:
+            junctions_met.append(j1)
+            for j2 in junctions:
+                if j2 not in junctions_met:
+                    G.add_edge(j1, j2, weight = self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2))
         T = nx.minimum_spanning_tree(G)
         return T.size(weight = 'weight')
 

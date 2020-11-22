@@ -61,16 +61,6 @@ class MDASumAirDistHeuristic(HeuristicFunction):
         Note that we ignore here the problem constraints (like enforcing the #matoshim and free
          space in the ambulance's fridge). We only make sure to visit all certain junctions in
          `all_certain_junctions_in_remaining_ambulance_path`.
-        TODO [Ex.24]:
-            Complete the implementation of this method.
-            Use `self.cached_air_distance_calculator.get_air_distance_between_junctions()` V
-             for air distance calculations.
-            For determinism, while building the path, when searching for the next nearest junction,
-             use the junction's index as a secondary grading factor. So that if there are 2 different
-             junctions with the same distance to the last junction of the so-far-built path, the
-             junction to be chosen is the one with the minimal index.
-            You might want to use python's tuples comparing to that end.
-             Example: (a1, a2) < (b1, b2) iff a1 < b1 or (a1 == b1 and a2 < b2).
         """
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
@@ -134,8 +124,16 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
               Use `nx.minimum_spanning_tree()` to get an MST. Calculate the MST size using the method
               `.size(weight='weight')`. Do not manually sum the edges' weights.
         """
-        raise NotImplementedError  # TODO: remove this line!
-
+        G = nx.Graph()
+        for j in junctions:
+            G.add_node(j)
+        junctions_left = junctions
+        for j1 in junctions_left:
+            junctions_left.remove(j1)
+            for j2 in junctions_left:
+                G.add_edge(j1, j2, weight = self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2))
+        T = nx.minimum_spanning_tree(G)
+        return T.size(weight = 'weight')
 
 class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
     heuristic_name = 'MDA-TimeObjectiveSumOfMinAirDistFromLab'

@@ -40,6 +40,7 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
                            if j1.index != j2.index)
         return max_air_dist
 
+
 class MDASumAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'MDA-Sum-AirDist'
 
@@ -62,8 +63,8 @@ class MDASumAirDistHeuristic(HeuristicFunction):
          `all_certain_junctions_in_remaining_ambulance_path`.
         TODO [Ex.24]:
             Complete the implementation of this method.
-            Use `self.cached_air_distance_calculator.get_air_distance_between_junctions()` for air
-             distance calculations.
+            Use `self.cached_air_distance_calculator.get_air_distance_between_junctions()` V
+             for air distance calculations.
             For determinism, while building the path, when searching for the next nearest junction,
              use the junction's index as a secondary grading factor. So that if there are 2 different
              junctions with the same distance to the last junction of the so-far-built path, the
@@ -80,7 +81,22 @@ class MDASumAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        raise NotImplementedError  # TODO: remove this line and complete the missing part here!
+        cur_min_pair = (0, state.current_location.index)
+        path_sum = 0
+        #self.problem.streets_map[cur_min_pair[1]] // should return the junction object
+
+        while len(all_certain_junctions_in_remaining_ambulance_path) > 1: # to have at least two junctions to run on
+            cur_junction = self.problem.streets_map[cur_min_pair[1]]
+            all_certain_junctions_in_remaining_ambulance_path.remove(cur_junction) # this junction always in result list
+            all_dist_pairs = []
+            # calculate all distances pairs between the current min junction and the all the rest appt.
+            for j in all_certain_junctions_in_remaining_ambulance_path:
+                cur_dist = (self.cached_air_distance_calculator.get_air_distance_between_junctions(cur_junction, j), j.index)
+                all_dist_pairs.append(cur_dist)
+            cur_min_pair = min(all_dist_pairs)
+            path_sum += cur_min_pair[0]
+
+        return path_sum
 
 
 class MDAMSTAirDistHeuristic(HeuristicFunction):

@@ -109,7 +109,7 @@ def toy_map_problem_experiments():
     print(res)
 
     # Ex.15 todo: uncomment this when assinging the HOME Work
-    #run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
+    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------
@@ -167,9 +167,7 @@ def mda_problem_with_astar_experiments():
     astar = AStar(MDAMSTAirDistHeuristic)
     res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
     print(res)
-    # TODO: create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
-    #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+
 
 
 def mda_problem_with_weighted_astar_experiments():
@@ -180,15 +178,11 @@ def mda_problem_with_weighted_astar_experiments():
     moderate_mda_problem_with_distance_cost = get_mda_problem('moderate', MDAOptimizationObjective.Distance)
 
     # Ex.30
-    # TODO: Call here the function `run_astar_for_weights_in_range()`
-    #       with `MDAMSTAirDistHeuristic`
-    #       over the `small_mda_problem_with_distance_cost`.
-    exit()  # TODO: remove!
+    run_astar_for_weights_in_range(MDAMSTAirDistHeuristic, small_mda_problem_with_distance_cost)
 
     # Ex.30
-    # TODO: Call here the function `run_astar_for_weights_in_range()`
-    #       with `MDASumAirDistHeuristic`
-    #       over the `moderate_mda_problem_with_distance_cost`.
+    run_astar_for_weights_in_range(MDASumAirDistHeuristic, moderate_mda_problem_with_distance_cost)
+
     exit()  # TODO: remove!
 
 

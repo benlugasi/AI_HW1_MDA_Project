@@ -145,9 +145,6 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
         The rest part of the total remained cost includes the distance between each non-visited reported-apartment
          and the closest lab (to this apartment) times the roommates in this apartment (as we take tests for all
          roommates).
-        TODO [Ex.33]:
-            Complete the implementation of this method.
-            Use `self.problem.get_reported_apartments_waiting_to_visit(state)`.
         """
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
@@ -164,7 +161,6 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
         nrTestsOnAmbulance = state.get_total_nr_tests_taken_and_stored_on_ambulance()
         if nrTestsOnAmbulance > 0:
             path_sum += nrTestsOnAmbulance * air_dist_to_closest_lab(state.current_location)
-        for apartment in reported_apartments_waiting_to_visit:
-            dist = air_dist_to_closest_lab(apartment.location)
-            path_sum += apartment.nr_roommates*dist
+        path_sum += sum(apartment.nr_roommates * air_dist_to_closest_lab(apartment.location)
+                        for apartment in reported_apartments_waiting_to_visit)
         return path_sum

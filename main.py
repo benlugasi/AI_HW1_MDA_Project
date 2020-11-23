@@ -108,8 +108,8 @@ def toy_map_problem_experiments():
     res = astar.solve_problem(toy_map_problem)
     print(res)
 
-    # Ex.15 todo: uncomment this when assinging the HOME Work
-    #run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
+    # Ex.15
+    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------
@@ -167,9 +167,7 @@ def mda_problem_with_astar_experiments():
     astar = AStar(MDAMSTAirDistHeuristic)
     res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
     print(res)
-    # TODO: create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
-    #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+
 
 
 def mda_problem_with_weighted_astar_experiments():
@@ -180,17 +178,10 @@ def mda_problem_with_weighted_astar_experiments():
     moderate_mda_problem_with_distance_cost = get_mda_problem('moderate', MDAOptimizationObjective.Distance)
 
     # Ex.30
-    # TODO: Call here the function `run_astar_for_weights_in_range()`
-    #       with `MDAMSTAirDistHeuristic`
-    #       over the `small_mda_problem_with_distance_cost`.
-    exit()  # TODO: remove!
+    run_astar_for_weights_in_range(MDAMSTAirDistHeuristic, small_mda_problem_with_distance_cost)
 
     # Ex.30
-    # TODO: Call here the function `run_astar_for_weights_in_range()`
-    #       with `MDASumAirDistHeuristic`
-    #       over the `moderate_mda_problem_with_distance_cost`.
-    exit()  # TODO: remove!
-
+    run_astar_for_weights_in_range(MDASumAirDistHeuristic, moderate_mda_problem_with_distance_cost)
 
 def monetary_cost_objectives_mda_problem_experiments():
     print()
@@ -200,15 +191,13 @@ def monetary_cost_objectives_mda_problem_experiments():
     moderate_mda_problem_with_monetary_cost = get_mda_problem('moderate', MDAOptimizationObjective.Monetary)
 
     # Ex.32
-    # TODO: create an instance of `UniformCost`
-    #       solve the `small_mda_problem_with_monetary_cost` with it and print the results.
-    exit()  # TODO: remove!
+    uc = UniformCost()
+    res = uc.solve_problem(small_mda_problem_with_monetary_cost)
+    print(res)
 
     # Ex.32
-    # TODO: create an instance of `UniformCost`
-    #       solve the `moderate_mda_problem_with_monetary_cost` with it and print the results.
-    exit()  # TODO: remove!
-
+    res = uc.solve_problem(moderate_mda_problem_with_monetary_cost)
+    print(res)
 
 def multiple_objectives_mda_problem_experiments():
     print()
@@ -218,6 +207,9 @@ def multiple_objectives_mda_problem_experiments():
     moderate_mda_problem_with_tests_travel_dist_cost = get_mda_problem('moderate', MDAOptimizationObjective.TestsTravelDistance)
 
     # Ex.35
+    astar = AStar(MDATestsTravelDistToNearestLabHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
+    print(res)
     # TODO: create an instance of `AStar` with the `MDATestsTravelDistToNearestLabHeuristic`,
     #       solve the `moderate_mda_problem_with_tests_travel_dist_cost` with it and print the results.
     exit()  # TODO: remove!
@@ -244,7 +236,6 @@ def mda_problem_with_astar_epsilon_experiments():
     print()
     print('Solve the MDA problem (small input, distance objective, using A*eps, use non-acceptable '
           'heuristic as focal heuristic).')
-
     small_mda_problem_with_distance_cost = get_mda_problem('small', MDAOptimizationObjective.Distance)
 
     # Firstly solve the problem with AStar & MST heuristic for having a reference for #devs.
@@ -284,11 +275,11 @@ def mda_problem_anytime_astar_experiments():
 
 def run_all_experiments():
     print('Running all experiments')
-    toy_map_problem_experiments()
-    basic_mda_problem_experiments()
-    mda_problem_with_astar_experiments()
-    mda_problem_with_weighted_astar_experiments()
-    monetary_cost_objectives_mda_problem_experiments()
+    #toy_map_problem_experiments() #todo: uncomment this when assinging the HOME Work
+    #basic_mda_problem_experiments()
+    #mda_problem_with_astar_experiments()
+    #mda_problem_with_weighted_astar_experiments()
+    #monetary_cost_objectives_mda_problem_experiments()
     multiple_objectives_mda_problem_experiments()
     mda_problem_with_astar_epsilon_experiments()
     mda_problem_anytime_astar_experiments()

@@ -162,10 +162,14 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
 
+
         def air_dist_to_closest_lab(junction: Junction) -> float:
             """
             Returns the distance between `junction` and the laboratory that is closest to `junction`.
             """
             return min(...)  # TODO: replace `...` with the relevant implementation.
+
+
+        air_dist_to_closest_lab()
 
         raise NotImplementedError  # TODO: remove this line!

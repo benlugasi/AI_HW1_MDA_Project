@@ -270,14 +270,14 @@ class MDAProblem(GraphProblem):
         distance_cost = self.map_distance_finder.get_map_cost_between(prev_state.current_location, succ_state.current_location)
         if distance_cost is None:
             return MDACost(float('inf'), float('inf'), float('inf'), self.optimization_objective)
-        testsOnAmbulance = float(succ_state.get_total_nr_tests_taken_and_stored_on_ambulance())
+        testsOnAmbulance = float(prev_state.get_total_nr_tests_taken_and_stored_on_ambulance())
         labTestTransferCost = 0
         labRevisitCost = 0
 
         if isinstance(succ_state.current_site, Laboratory):
             if testsOnAmbulance > 0:
                 labTestTransferCost = succ_state.current_site.tests_transfer_cost
-            if succ_state.current_site in succ_state.visited_labs:
+            if succ_state.current_site in prev_state.visited_labs:
                 labRevisitCost = succ_state.current_site.revisit_extra_cost
 
         gasPrice = self.problem_input.gas_liter_price
@@ -289,7 +289,7 @@ class MDAProblem(GraphProblem):
         tests_travel_distance_cost = testsOnAmbulance*distance_cost
 
         return MDACost(distance_cost, monetary_cost, tests_travel_distance_cost, self.optimization_objective)
-        #TODO: monetary_cost, tests_travel_distance_cost have not been tested yet
+        #TODO:  tests_travel_distance_cost have not been tested yet
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """

@@ -112,18 +112,6 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
             self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state))
 
     def _calculate_junctions_mst_weight_using_air_distance(self, junctions: List[Junction]) -> float:
-        """
-        TODO [Ex.27]: Implement this method.
-              Use `networkx` (nx) package (already imported in this file) to calculate the weight
-               of the minimum-spanning-tree of the graph in which the vertices are the given junctions
-               and there is an edge between each pair of distinct junctions (no self-loops) for which
-               the weight is the air distance between these junctions.
-              Use the method `self.cached_air_distance_calculator.get_air_distance_between_junctions()`
-               to calculate the air distance between the two junctions.
-              Google for how to use `networkx` package for this purpose.
-              Use `nx.minimum_spanning_tree()` to get an MST. Calculate the MST size using the method
-              `.size(weight='weight')`. Do not manually sum the edges' weights.
-        """
         G = nx.Graph()
         G.add_nodes_from(junctions)
         #for j in junctions:
@@ -168,6 +156,15 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
             """
             Returns the distance between `junction` and the laboratory that is closest to `junction`.
             """
-            return min(...)  # TODO: replace `...` with the relevant implementation.
+            return min(self.cached_air_distance_calculator.get_air_distance_between_junctions(junction, lab.location)
+                       for lab in self.problem.problem_input.laboratories)
 
-        raise NotImplementedError  # TODO: remove this line!
+        path_sum = 0
+        reported_apartments_waiting_to_visit = self.problem.get_reported_apartments_waiting_to_visit(state)
+        nrTestsOnAmbulance = state.get_total_nr_tests_taken_and_stored_on_ambulance()
+        if nrTestsOnAmbulance > 0:
+            path_sum += nrTestsOnAmbulance * air_dist_to_closest_lab(state.current_location)
+        for apartment in reported_apartments_waiting_to_visit:
+            dist = air_dist_to_closest_lab(apartment.location)
+            path_sum += apartment.nr_roommates*dist
+        return path_sum

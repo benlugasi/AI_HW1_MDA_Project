@@ -210,24 +210,16 @@ def multiple_objectives_mda_problem_experiments():
     astar = AStar(MDATestsTravelDistToNearestLabHeuristic)
     res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
     print(res)
-    exit()  # TODO: remove!
 
     # Ex.38
-    # TODO: Implement the algorithm A_2 described in this exercise in the assignment instructions.
-    #       Create an instance of `AStar` with the `MDAMSTAirDistHeuristic`.
-    #       Solve the `moderate_mda_problem_with_distance_cost` with it and store the solution's (optimal)
-    #         distance cost to the variable `optimal_distance_cost`.
-    #       Calculate the value (1 + eps) * optimal_distance_cost in the variable `max_distance_cost` (for eps=0.6).
-    #       Create another instance of `AStar` with the `MDATestsTravelDistToNearestLabHeuristic`, and specify the
-    #          param `open_criterion` (to AStar c'tor) to be the criterion mentioned in the A_2 algorithm in the
-    #          assignment instructions. Use a lambda function for that. This function should receive a `node` and
-    #          has to return whether to add this just-created-node to the `open` queue.
-    #          Remember that in python you can pass an argument to a function's parameter by the parameter's name
-    #          `some_func(argument_name=some_value)`. This becomes especially relevant when you want to leave some
-    #          previous parameters with their default values and pass an argument to a parameter that is positioned
-    #          elsewhere next.
-    #       Solve the `moderate_mda_problem_with_tests_travel_dist_cost` with it and print the results.
-    exit()  # TODO: remove!
+    astar = AStar(MDAMSTAirDistHeuristic)
+    res = astar.solve_problem(moderate_mda_problem_with_distance_cost)
+    optimal_distance_cost = res.solution_g_cost
+    eps = 0.6
+    max_distance_cost = (1+eps)*optimal_distance_cost
+    astar = AStar(MDATestsTravelDistToNearestLabHeuristic, open_criterion= lambda node: node.cost.distance_cost <= max_distance_cost)
+    res = astar.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
+    print(res)
 
 
 def mda_problem_with_astar_epsilon_experiments():
@@ -273,14 +265,14 @@ def mda_problem_anytime_astar_experiments():
 
 def run_all_experiments():
     print('Running all experiments')
-    toy_map_problem_experiments() #todo: uncomment this when assinging the HOME Work
-    basic_mda_problem_experiments()
-    mda_problem_with_astar_experiments()
-    mda_problem_with_weighted_astar_experiments()
-    monetary_cost_objectives_mda_problem_experiments()
+    #toy_map_problem_experiments() #todo: uncomment this when assinging the HOME Work
+    #basic_mda_problem_experiments()
+    #mda_problem_with_astar_experiments()
+    #mda_problem_with_weighted_astar_experiments()
+    #monetary_cost_objectives_mda_problem_experiments()
     multiple_objectives_mda_problem_experiments()
-    mda_problem_with_astar_epsilon_experiments()
-    mda_problem_anytime_astar_experiments()
+    #mda_problem_with_astar_epsilon_experiments()
+    #mda_problem_anytime_astar_experiments()
 
 
 if __name__ == '__main__':

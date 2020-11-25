@@ -49,25 +49,13 @@ class MapProblem(GraphProblem):
         """
         # All of the states in this problem are instances of the class `MapState`.
         assert isinstance(state_to_expand, MapState)
-        assert(state_to_expand is not None) #TODO Check if (state_to_expand is null)?
+        assert(state_to_expand is not None)
 
         # Get the junction (in the map) that is represented by the state to expand.
         junction = self.streets_map[state_to_expand.junction_id]
         for link in junction.outgoing_links:
             successor_state = MapState(link.target)
             yield OperatorResult(successor_state, link.distance)
-
-        # TODO [Ex.10]: Remove when ready!
-        #  Read the documentation of this method in the base class `GraphProblem.expand_state_with_costs()`.
-        #  Finish the implementation of this method.
-        #  Iterate over the outgoing links of the current junction (find the implementation of `Junction`
-        #  type to see the exact field name to access the outgoing links). For each link:
-        #    (1) Create the successor state (it should be an instance of class `MapState`). This state represents the
-        #        target junction of the current link;
-        #    (2) Yield an object of type `OperatorResult` with the successor state and the operator cost (which is
-        #        `link.distance`). You don't have to specify the operator name here.
-        #  Note: Generally, in order to check whether a variable is set to None you should use the expression:
-        #        `my_variable_to_check is None`, and particularly do NOT use comparison (==).
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """

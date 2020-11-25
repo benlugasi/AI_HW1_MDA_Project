@@ -48,7 +48,6 @@ class AStar(BestFirstSearch):
         Notice: You may use `search_node.g_cost`, `self.heuristic_weight`, and `self.heuristic_function`.
         """
         w = self.heuristic_weight
-        # TODO check if the estimate function should actually be used their.
         return ((1-w)*search_node.g_cost) + (w*self.heuristic_function.estimate(search_node.state))
 
 
@@ -71,9 +70,6 @@ class AStar(BestFirstSearch):
         Remember: In A*, in contrast to uniform-cost, a successor state might have an already closed node,
                   but still could be improved.
         """
-        #todo: remove when done testing - assumption doesn't exist in both
-        assert(not(self.open.has_state(successor_node.state) and self.close.has_state(successor_node.state)))
-
         if self.open.has_state(successor_node.state):
             old_node = self.open.get_node_by_state(successor_node.state)
             if old_node.g_cost > successor_node.g_cost:

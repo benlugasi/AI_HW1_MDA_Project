@@ -66,25 +66,6 @@ class AnytimeAStar(GraphProblemSolver):
             low_heuristic_weight = 0.5
             high_heuristic_weight = self.initial_high_heuristic_weight_bound
             while (high_heuristic_weight - low_heuristic_weight) > 0.01:
-                # TODO [Ex.45]:
-                #  Complete the missing part inside this loop.
-                #  Perform a binary search over the possible values of `heuristic_weight`.
-                #  In each iteration, create an AStar solver with:
-                #   (i)   the `heuristic_weight` set to the mid point of the current low & high binary search bound,
-                #   (ii)  the `max_nr_states_to_expand` set to `self.max_nr_states_to_expand_per_iteration`,
-                #   (iii) the `heuristic_function_type` set to `self.heuristic_function_type`,
-                #   and solve the given problem with it.
-                #  Don't forget to update `total_nr_expanded_states` and `max_nr_stored_states` (see how we've done
-                #   it above).
-                #  Update `low_heuristic_weight` and `high_heuristic_weight` according to the result of the AStar
-                #   in order the keep the invariant (mentioned above) satisfied.
-                #  You might need to use the field `is_solution_found` of the search result obtained from the AStar.
-                #  Update `best_solution` and `best_heuristic_weight` if needed. `best_solution` stores the solution
-                #   (SearchResult object) found with the best g-cost (use `solution_g_cost` field of SearchResult to
-                #   obtain the g-cost of a solution). Update iff the current inspected solution cost < the cost of
-                #   the best found solution so far.
-                #  Make sure to also read the big comment in the head of this class.
-
                 mid_weight = (high_heuristic_weight + low_heuristic_weight)/2
                 w_astar = AStar(self.heuristic_function_type, mid_weight, self.max_nr_states_to_expand_per_iteration)
                 w_astar_solution = w_astar.solve_problem(problem)

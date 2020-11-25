@@ -92,7 +92,6 @@ class AStarEpsilon(AStar):
         focal = []
         restorer_open_list = []
 
-        #todo: check if it's equal or not
         while not self.open.is_empty() and (self.max_focal_size is None or len(focal) <= self.max_focal_size):
             node_to_expand = self.open.pop_next_node()
             if node_to_expand.expanding_priority <= max_expanding_priority:
@@ -113,14 +112,8 @@ class AStarEpsilon(AStar):
         for node in focal:
             resArr = np.append(resArr, float(self.within_focal_priority_function(node, problem, self)))
 
-        #  V.2 self.within_focal_priority_function(node)
-
-        focal_index = np.argmin(resArr)  # argmin returns the indices of the min value
-
-        if isinstance(focal_index, np.intc):  # meaning only one value returned
-            expended_node = focal.pop(focal_index)
-        else:  # --> there are multiple indices of the same minimal value in the focal list - pick one of them
-            expended_node = focal.pop(focal_index[0])
+        focal_index = np.atleast_1d(np.argmin(resArr))
+        expended_node = focal.pop(focal_index[0])
         # _________________________________________________________________________________________________
 
         # Part 6

@@ -39,46 +39,6 @@ class AStarEpsilon(AStar):
         Extracts the next node to expand from the open queue,
          by focusing on the current FOCAL and choosing the node
          with the best within_focal_priority from it.
-        TODO [Ex.42]: Implement this method!
-            1.
-            Find the minimum expanding-priority value in the `open` queue.
-            Calculate the maximum expanding-priority of the FOCAL, which is
-             the min expanding-priority in open multiplied by (1 + eps) where
-             eps is stored under `self.focal_epsilon`.
-            2.
-            Create the FOCAL by popping items from the `open` queue and inserting
-             them into a focal list. Don't forget to satisfy the constraint of
-             `self.max_focal_size` if it is set (not None).
-             3.
-             Notice: You might want to pop items from the `open` priority queue,
-             and then choose an item out of these popped items. Don't forget:
-             the other items have to be pushed back into open.
-             4.
-            Inspect the base class `BestFirstSearch` to retrieve the type of
-             the field `open`. Then find the definition of this type and find
-             the right methods to use (you might want to peek the head node, to
-             pop/push nodes and to query whether the queue is empty).
-            Remember that `open` is a priority-queue sorted by `f` in an ascending
-             order (small to big). Popping / peeking `open` returns the node with
-             the smallest `f`.
-             5.
-            For each node (candidate) in the created focal, calculate its priority
-             by calling the function `self.within_focal_priority_function` on it.
-             This function expects to get 3 values: the node, the problem and the
-             solver (self). You can create an array of these priority values. Then,
-             use `np.argmin()` to find the index of the item (within this array)
-             with the minimal value. After having this index you could pop this
-             item from the focal (at this index). This is the node that have to
-             be eventually returned.
-             ______
-             6. HANDLE CORNER CASES:
-            Don't forget to handle correctly corner-case like when the open queue
-             is empty. In this case a value of `None` has to be returned.
-             ______
-            Note: All the nodes that were in the open queue at the beginning of this
-             method should be kept in the open queue at the end of this method, except
-             for the extracted (and returned) node.
-             _____
         """
         if self.open.is_empty():  # first Corner Case
             return None
@@ -92,7 +52,7 @@ class AStarEpsilon(AStar):
         focal = []
         restorer_open_list = []
 
-        while not self.open.is_empty() and (self.max_focal_size is None or len(focal) <= self.max_focal_size):
+        while not self.open.is_empty() and (self.max_focal_size is None or len(focal) < self.max_focal_size):
             node_to_expand = self.open.pop_next_node()
             if node_to_expand.expanding_priority <= max_expanding_priority:
                 focal.append(node_to_expand)  # says in the comment that focal is a list
@@ -119,5 +79,8 @@ class AStarEpsilon(AStar):
         # Part 6
         #  delete the returned node from the open queue
         self.open.extract_node(expended_node)
+
+        if self.use_close:
+            self.close.add_node(expended_node)
 
         return expended_node
